@@ -27,11 +27,6 @@ class Ginger:
         print("=" * 16)
         for indice, elemento in enumerate(self.collezione):
             print(f"{indice+1}. {elemento}")
-        print()
-        print("ALLEGATI:")
-        print("=" * 16)
-        for indice, elemento in enumerate(self.allegati):
-            print(f"{indice+1}. {elemento}")
 
     def analizza_cartella(self, cartella):
         """
