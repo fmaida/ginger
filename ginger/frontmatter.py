@@ -1,7 +1,8 @@
 import os
 import re
+from collections import OrderedDict
 
-import yaml
+from ruamel import yaml
 import markdown2
 
 basedir = os.path.dirname(__file__)
@@ -13,8 +14,10 @@ class FrontMatterException(Exception):
 
 class FrontMatter:
     """
-    Questa classe gestisce una pagina markdown 
-    che contenga una parte iniziale in front-matter YAML
+    Questa classe gestisce la lettura e la scrittura 
+    di un documento di testo che contenga una parte 
+    iniziale in front-matter YAML ed il resto con la
+    formattazione Markdown
     """
 
     def __init__(self, p_file):
@@ -25,7 +28,7 @@ class FrontMatter:
             p_file: Il file da aprire 
         """
 
-        self.meta = {}
+        self.meta = OrderedDict()
         self.contenuto = ""
         self.importa(p_file)
 
@@ -43,7 +46,7 @@ class FrontMatter:
         with open(p_file, "r") as f:
             testo = f.read()
         frontmatter, contenuto = self.separa_frontmatter(testo)
-        self.meta = yaml.load(frontmatter)
+        self.meta = yaml.safe_load(frontmatter)
         self.contenuto = markdown2.markdown(contenuto)
 
     def esporta(self):

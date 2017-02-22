@@ -1,19 +1,63 @@
 import os
+import re
+
 from .modello import Elemento
 from .frontmatter import FrontMatter
+from .documenti import ListaDocumenti, Documento
+
+
+class TipoAllegato:
+
+    def __init__(self, tag, estensioni):
+        self.tag = tag
+        self.estensioni = estensioni
 
 
 class Ginger:
+    """
+    Ginger scandaglia una o più cartelle alla ricerca di
+    file di testo che contengano un front-matter YAML con 
+    i meta-dati ed una parte di testo formattata in markdown.
+    Inoltre cerca gli allegati (audio, video, files) correlati
+    a questi file di testo. Riesce a riconoscerli perchè hanno 
+    lo stesso nome ("zanac.md", "zanac.jpg", "zanac.mp3", ...)
+    oppure perchè hanno nomi simili fra di loro
+    ("zanac.md", "zanac--1.jpg", "zanac--2.jpg", ...)
+    """
 
     def __init__(self, *args):
-        self.estensione = ".md"
+        """
+        Costruttore della classe, a cui passo una serie
+        di cartelle da scansionare
+        
+        Args:
+            *args: Percorsi alle cartelle da analizzare 
+        """
+
+        # Imposta le cartelle da scandagliare
         self.cartelle = args
-        self.collezione = []
+        # Estensione dei file di testo da ricercare
+        self.estensione = ".md"
+        # Azzera alcuni parametri
+        self.totale_documenti = 0
+        self.documenti = ListaDocumenti()
         self.allegati = []
-        self.allegati_controllabili = []
 
     def registra_allegati(self, tag, estensioni):
-        self.allegati_controllabili.append(estensioni)
+        """
+        Con questo metodo indico una o più estensioni 
+        da tenere sotto controllo durante la scansione, 
+        ed eventualmente aggiungere alla lista.
+        (es: "Immagini", [".jpg", ".png", ".gif"])
+        
+        Args:
+            tag: Il tag con cui catalogare i files trovati 
+            estensioni: Una lista delle estensioni da ricercare
+
+        Returns:
+            None
+        """
+        self.allegati.append(TipoAllegato(tag=tag, estensioni=estensioni))
 
     def scansiona(self):
         """
@@ -21,12 +65,10 @@ class Ginger:
         e di possibili allegati
         """
 
+        self.documenti = ListaDocumenti()
+
         for cartella in self.cartelle:
             self.analizza_cartella(cartella)
-        print("DOCUMENTI:")
-        print("=" * 16)
-        for indice, elemento in enumerate(self.collezione):
-            print(f"{indice+1}. {elemento}")
 
     def analizza_cartella(self, cartella):
         """
@@ -38,14 +80,17 @@ class Ginger:
         risultati = os.scandir(cartella)
         for elemento in risultati:
             _id, estensione = os.path.splitext(elemento.name)
-            if elemento.name.endswith(self.estensione) and elemento.is_file():
-                self.aggiungi_o_modifica(_id, elemento, "")
-            elif estensione in self.allegati_controllabili[0]:
-                self.aggiungi_o_modifica(_id, elemento, "Images")
-            elif estensione in self.allegati_controllabili[1]:
-                self.aggiungi_o_modifica(_id, elemento, "Files")
-            elif elemento.is_dir():
+            if elemento.is_dir():
+                # E' una sottocartella
                 self.analizza_cartella(os.path.join(cartella, elemento))
+            elif elemento.name.endswith(self.estensione) and elemento.is_file():
+                # E' un file .md
+                self.aggiungi_o_modifica(_id, elemento, "")
+            else:
+                # E' un file con un'altra estensione
+                for tipo in self.allegati:
+                    if estensione in tipo.estensioni:
+                        self.aggiungi_o_modifica(_id, elemento, tipo.tag)
 
     def aggiungi_o_modifica(self, _id, documento, tag):
         """
@@ -56,25 +101,38 @@ class Ginger:
             Crea un elemento vuoto e aggiunge agli allegati se _id non esiste
             Aggiunge in coda agli allegati se _id esiste
         Args:
-            _id: 
-            documento: 
-            tag: 
+            _id: L'id dell'elemento
+            documento: Il documento da aggiungere
+            tag: Il tag sotto cui catalogarlo (se è vuoto è un file .md)
         """
         try:
-            indice = next(indice for indice, elemento in enumerate(self.collezione) if elemento["id"] == _id)
-            # L'elemento esiste
+
+            # Prima di iniziare cerca di capire se il nome dell'elemento
+            # finisce con un "--n" dove n è un numero da 0 in poi
+            # Es: file: "zanac--1" --> id: "zanac"
+            #     file: "pippols--14" --> id: "pippols"
+
+            valori = re.split(r"[-]{2,}[0-9]+$", _id)
+            _id = valori[0].lower()
+
+            # Cerca l'ID per vedere se è già stato catalogato
+            indice = self.documenti.cerca(_id)
+
+            # L'elemento con l'ID esiste già,
+            # altrimenti si verificherebbe un'eccezione
             if tag == "":
-                self.collezione[indice]["id"] = _id
-                self.collezione[indice]["documento"] = documento.name
+                self.documenti[indice].id = _id
+                self.documenti[indice].file = documento
             else:
-                if tag not in self.collezione[indice]:
-                    self.collezione[indice][tag] = []
-                self.collezione[indice][tag].append(documento.name)
+                if tag not in self.documenti[indice].meta:
+                    self.documenti[indice].meta[tag] = []
+                self.documenti[indice].meta[tag].append(documento)
         except StopIteration:
-            # L'elemento non esiste
-            n = len(self.collezione)
-            self.collezione.append({"index": n, "id": _id, "documento": ""})
+            # Se siamo qui vuol dire che non ha trovato un'altro
+            # elemento con lo stesso ID ricercato... pazienza, vuol
+            # dire che lo aggiungiamo ai nostri documenti
+            self.documenti.aggiungi(Documento(_id=_id, _file=""))
             if tag == "":
-                self.collezione[n]["documento"] = documento.name
+                self.documenti.ultimo().file = documento
             else:
-                self.collezione[n][tag] = [documento.name]
+                self.documenti.ultimo().meta[tag] = [documento]
