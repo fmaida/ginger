@@ -1,4 +1,5 @@
 import os
+import json
 from collections import OrderedDict
 
 from ruamel import yaml
@@ -35,20 +36,23 @@ print("DOCUMENTI TROVATI:")
 print("=" * 20)
 for indice, elemento in enumerate(ginger.documenti):
     print(elemento)
-    print(elemento.meta["Images"])
 
-    """
-    a = FrontMatter(elemento["documento"])
-    for tipo in ginger.allegati:
-        try:
-            # a.meta[tipo["tag"]] = elemento[tipo["tag"]]
-            pass
-        except KeyError:
-            pass
-    b = OrderedDict(a.meta)
-    print(b)
-    b.move_to_end("title", last=False)
-    # b[b.keys()["Title"]] = 0
-    """
+print()
+print(ginger.json())
+
+
+"""
+a = FrontMatter(elemento["documento"])
+for tipo in ginger.allegati:
+    try:
+        # a.meta[tipo["tag"]] = elemento[tipo["tag"]]
+        pass
+    except KeyError:
+        pass
+b = OrderedDict(a.meta)
+print(b)
+b.move_to_end("title", last=False)
+# b[b.keys()["Title"]] = 0
+"""
 
 # print("----\n" + yaml.dump(b) + "----\n\n" + a.contenuto)

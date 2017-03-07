@@ -1,8 +1,7 @@
+import json
 import os
 import re
 
-# from .modello import Elemento
-from .frontmatter import FrontMatter
 from .documenti import ListaDocumenti, Documento
 
 
@@ -95,14 +94,14 @@ class Ginger:
                 self.analizza_cartella(os.path.join(cartella, elemento))
             elif elemento.name.endswith(self.estensione) and elemento.is_file():
                 # E' un file .md
-                self.aggiungi_o_modifica(_id, elemento, "")
+                self.aggiungi_o_modifica(_id, elemento)
             else:
                 # E' un file con un'altra estensione
                 for tipo in self.allegati:
                     if estensione in tipo.estensioni:
-                        self.aggiungi_o_modifica(_id, elemento, tipo.tag)
+                        self.aggiungi_o_modifica(_id, elemento, tag=tipo.tag)
 
-    def aggiungi_o_modifica(self, _id, documento, tag):
+    def aggiungi_o_modifica(self, _id, documento, tag=""):
         """
         Se è un documento (tag == ""):
             Crea l'elemento se _id non esiste
@@ -144,5 +143,12 @@ class Ginger:
             self.documenti.aggiungi(Documento(_id=_id, _file=""))
             if tag == "":
                 self.documenti.ultimo().file = os.path.relpath(documento, self.basedir)
+                self.documenti.ultimo().importa_tags()
             else:
                 self.documenti.ultimo().meta[tag] = [os.path.relpath(documento, self.basedir)]
+
+    def json(self, indent=4):
+        temp = []
+        for documento in self.documenti:
+            temp.append(documento.json())
+        return json.dumps(temp, indent=indent)
