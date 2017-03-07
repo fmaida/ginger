@@ -5,7 +5,7 @@ from ruamel import yaml
 from ginger import Ginger, FrontMatter
 
 
-basedir = "/Users/Cesco/Documents/Progetti/HTML-CSS/ginger-output"
+basedir = "/Users/Scala/Documents/Progetti/HTML-CSS/ginger-output"
 cartelle = []
 cartelle.append(os.path.join(basedir, "_content"))
 cartelle.append(os.path.join(basedir, "_files"))
@@ -35,6 +35,7 @@ print("DOCUMENTI TROVATI:")
 print("=" * 20)
 for indice, elemento in enumerate(ginger.documenti):
     print(elemento)
+    print(elemento.meta["Images"])
 
     """
     a = FrontMatter(elemento["documento"])

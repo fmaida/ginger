@@ -1,7 +1,7 @@
 import os
 import re
 
-from .modello import Elemento
+# from .modello import Elemento
 from .frontmatter import FrontMatter
 from .documenti import ListaDocumenti, Documento
 
@@ -36,6 +36,8 @@ class Ginger:
 
         # Imposta le cartelle da scandagliare
         self.cartelle = args
+        # Imposta la cartella base
+        self.basedir = self.cartelle[0]
         # Estensione dei file di testo da ricercare
         self.estensione = ".md"
         # Azzera alcuni parametri
@@ -69,6 +71,14 @@ class Ginger:
 
         for cartella in self.cartelle:
             self.analizza_cartella(cartella)
+
+        # Una volta finito di scansionare le cartelle, riordina gli allegati
+        for elemento in self.documenti:
+            for tipo in self.allegati:
+                try:
+                    elemento.meta[tipo.tag].sort()
+                except:
+                    pass
 
     def analizza_cartella(self, cartella):
         """
@@ -122,17 +132,17 @@ class Ginger:
             # altrimenti si verificherebbe un'eccezione
             if tag == "":
                 self.documenti[indice].id = _id
-                self.documenti[indice].file = documento
+                self.documenti[indice].file = os.path.relpath(documento, self.basedir)
             else:
                 if tag not in self.documenti[indice].meta:
                     self.documenti[indice].meta[tag] = []
-                self.documenti[indice].meta[tag].append(documento)
+                self.documenti[indice].meta[tag].append(os.path.relpath(documento, self.basedir))
         except StopIteration:
             # Se siamo qui vuol dire che non ha trovato un'altro
             # elemento con lo stesso ID ricercato... pazienza, vuol
             # dire che lo aggiungiamo ai nostri documenti
             self.documenti.aggiungi(Documento(_id=_id, _file=""))
             if tag == "":
-                self.documenti.ultimo().file = documento
+                self.documenti.ultimo().file = os.path.relpath(documento, self.basedir)
             else:
-                self.documenti.ultimo().meta[tag] = [documento]
+                self.documenti.ultimo().meta[tag] = [os.path.relpath(documento, self.basedir)]
