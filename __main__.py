@@ -3,10 +3,11 @@ import json
 from collections import OrderedDict
 
 from ruamel import yaml
-from .ginger import Ginger
+from ginger import Ginger
 
 
-basedir = "/Users/Cesco/Documents/Progetti/HTML-CSS/ginger-output"
+basedir = os.path.join(os.path.expanduser("~"), "Documents",
+                       "Progetti", "HTML-CSS", "ginger-output")
 cartelle = []
 cartelle.append(os.path.join(basedir, "_content"))
 cartelle.append(os.path.join(basedir, "_files"))
