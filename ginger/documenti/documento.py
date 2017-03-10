@@ -6,9 +6,12 @@ from .frontmatter import FrontMatter, FrontMatterException
 
 class Documento:
 
-    def __init__(self, _id: str, _file: os.DirEntry):
+    def __init__(self, _id: str, _file: os.DirEntry, basedir=None):
         self.id = _id
-        self.file = _file
+        if basedir:
+            self.file = os.path.relpath(_file, basedir)
+        else:
+            self.file = _file
         self.meta = OrderedDict()
         self.importa_tags()
 
@@ -19,6 +22,7 @@ class Documento:
                 for chiave in f.meta:
                     self.meta[chiave.lower()] = f.meta[chiave]
         except FrontMatterException:
+            a = 1
             pass
 
     def json(self):
