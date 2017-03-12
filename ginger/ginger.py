@@ -148,8 +148,22 @@ class Ginger:
             else:
                 self.documenti.ultimo().meta[tag] = [os.path.relpath(documento, self.basedir)]
 
+    def find(self, _id):
+        temp = [elemento for elemento in self.documenti.elenco if elemento["id"] == _id]
+        if len(temp) > 0:
+            return temp[0]
+        else:
+            return None
+
     def json(self, indent=4):
         temp = []
         for documento in self.documenti:
             temp.append(documento.json())
         return json.dumps(temp, indent=indent)
+
+    def __iter__(self):
+        for elemento in self.documenti:
+            yield elemento
+
+    def __len__(self):
+        return len(self.documenti)
