@@ -31,7 +31,7 @@ for index in doclist:
     actual_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%m")
     temp = []
     temp.append("----")
-    temp.append("Title: This is the element No. {}".format(index+1))
+    temp.append("Title: This is the element no. {}".format(index+1))
     temp.append("Date:  {}".format(actual_time))
     temp.append("Tags:  {}".format(make_a_tag()))
     temp.append("----")

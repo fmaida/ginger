@@ -48,7 +48,6 @@ print(ginger.json())
 print()
 print(str((t2 - t1)/datetime.timedelta(seconds=1)))
 
-# import test
 
 """
 a = FrontMatter(elemento["documento"])
