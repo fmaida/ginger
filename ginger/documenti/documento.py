@@ -6,19 +6,23 @@ from .frontmatter import FrontMatter, FrontMatterException
 
 class Documento:
 
-    def __init__(self, _id: str, _file: os.DirEntry, basedir=None):
+    def __init__(self, _id: str, _file: os.DirEntry, basedir):
         self.id = _id
-        if basedir:
-            self.file = os.path.relpath(_file, basedir)
-        else:
-            self.file = _file
         self.meta = OrderedDict()
-        self.importa_tags()
+        if _file != "":
+            if basedir:
+                self.file = os.path.relpath(_file, basedir)
+            else:
+                self.file = _file
+            self.importa_tags(basedir)
+        else:
+            self.file = ""
 
-    def importa_tags(self):
+    def importa_tags(self, basedir):
         try:
-            if os.path.exists(self.file):
-                f = FrontMatter(self.file)
+            percorso = os.path.join(basedir, self.file)
+            if os.path.exists(percorso):
+                f = FrontMatter(percorso)
                 for chiave in f.meta:
                     self.meta[chiave.lower()] = f.meta[chiave]
         except FrontMatterException:

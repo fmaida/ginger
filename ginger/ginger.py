@@ -132,6 +132,7 @@ class Ginger:
             if tag == "":
                 self.documenti[indice].id = _id
                 self.documenti[indice].file = os.path.relpath(documento, self.basedir)
+                self.documenti[indice].importa_tags(self.basedir)
             else:
                 if tag not in self.documenti[indice].meta:
                     self.documenti[indice].meta[tag] = []
@@ -140,10 +141,10 @@ class Ginger:
             # Se siamo qui vuol dire che non ha trovato un'altro
             # elemento con lo stesso ID ricercato... pazienza, vuol
             # dire che lo aggiungiamo ai nostri documenti
-            self.documenti.aggiungi(Documento(_id=_id, _file=""))
+            self.documenti.aggiungi(Documento(_id=_id, _file="", basedir=self.basedir))
             if tag == "":
                 self.documenti.ultimo().file = os.path.relpath(documento, self.basedir)
-                self.documenti.ultimo().importa_tags()
+                self.documenti.ultimo().importa_tags(self.basedir)
             else:
                 self.documenti.ultimo().meta[tag] = [os.path.relpath(documento, self.basedir)]
 

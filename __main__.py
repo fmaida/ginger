@@ -1,4 +1,5 @@
 import os
+import datetime
 import json
 from collections import OrderedDict
 
@@ -16,6 +17,8 @@ cartelle.append(os.path.join(basedir, "_images"))
 ginger = Ginger(*cartelle)
 ginger.registra_allegati(tag="Images", estensioni=[".jpg", ".jpeg", ".png", ".gif"])
 ginger.registra_allegati(tag="Files", estensioni=[".zip", ".rar", ".7z"])
+
+t1 = datetime.datetime.now()
 ginger.scansiona()
 
 
@@ -38,10 +41,14 @@ print("=" * 20)
 for indice, elemento in enumerate(ginger.documenti):
     print(elemento)
 
+t2 = datetime.datetime.now()
+
 print()
 print(ginger.json())
+print()
+print(str((t2 - t1)/datetime.timedelta(seconds=1)))
 
-import test
+# import test
 
 """
 a = FrontMatter(elemento["documento"])
