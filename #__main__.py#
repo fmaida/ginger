@@ -41,7 +41,6 @@ for indice, elemento in enumerate(ginger.documenti):
 print()
 print(ginger.json())
 
-import test
 
 """
 a = FrontMatter(elemento["documento"])
