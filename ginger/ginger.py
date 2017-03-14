@@ -58,7 +58,7 @@ class Ginger:
         Returns:
             None
         """
-        self.allegati.append(TipoAllegato(tag=tag, estensioni=estensioni))
+        self.allegati.append(TipoAllegato(tag=tag.lower(), estensioni=estensioni))
 
     def scansiona(self):
         """
@@ -149,7 +149,7 @@ class Ginger:
                 self.documenti.ultimo().meta[tag] = [os.path.relpath(documento, self.basedir)]
 
     def find(self, _id):
-        temp = [elemento for elemento in self.documenti.elenco if elemento["id"] == _id]
+        temp = [elemento for elemento in self.documenti if elemento.id == _id]
         if len(temp) > 0:
             return temp[0]
         else:

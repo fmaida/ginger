@@ -38,7 +38,11 @@ class GingerTest(unittest.TestCase):
                                 "Non ci doveva essere un documento senza tag")
 
     def test_il_primo_ha_almeno_un_immagine(self):
-        self.assertGreaterEqual(1, self.ginger.find("element0001").meta["images"],
+        """
+        Il primo elemento ha sempre almeno un'immagine, per via di come creo
+        i files nel pacchetto mytests
+        """
+        self.assertGreaterEqual(1, len(self.ginger.find("element0001").meta["images"]),
                                 "Il primo elemento doveva avere almeno un'immagine")
 
 if __name__ == "__main__":

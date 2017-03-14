@@ -26,7 +26,6 @@ class Documento:
                 for chiave in f.meta:
                     self.meta[chiave.lower()] = f.meta[chiave]
         except FrontMatterException:
-            a = 1
             pass
 
     def json(self):
@@ -35,7 +34,7 @@ class Documento:
         temp["file"] = self.file
         temp["rel"] = {}
         for chiave in self.meta:
-            temp["rel"][chiave.lower()] = self.meta[chiave]
+            temp["rel"][chiave] = self.meta[chiave]
         return temp
 
     def __repr__(self):
