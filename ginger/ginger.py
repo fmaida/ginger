@@ -2,7 +2,7 @@ import json
 import os
 import re
 
-from .documenti import ListaDocumenti, Documento
+from .documenti import ListaDocumenti, Documento, DocumentNotFoundException
 
 
 class TipoAllegato:
@@ -134,10 +134,13 @@ class Ginger:
                 self.documenti[indice].file = os.path.relpath(documento, self.basedir)
                 self.documenti[indice].importa_tags(self.basedir)
             else:
-                if tag not in self.documenti[indice].meta:
-                    self.documenti[indice].meta[tag] = []
-                self.documenti[indice].meta[tag].append(os.path.relpath(documento, self.basedir))
-        except StopIteration:
+                try:
+                    if tag not in self.documenti[indice].meta:
+                        self.documenti[indice].meta[tag] = []
+                    self.documenti[indice].meta[tag].append(os.path.relpath(documento, self.basedir))
+                except TypeError:
+                    pass
+        except DocumentNotFoundException:
             # Se siamo qui vuol dire che non ha trovato un'altro
             # elemento con lo stesso ID ricercato... pazienza, vuol
             # dire che lo aggiungiamo ai nostri documenti

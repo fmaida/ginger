@@ -1,3 +1,7 @@
+class DocumentNotFoundException(Exception):
+    pass
+
+
 class ListaDocumenti:
 
     def __init__(self):
@@ -10,13 +14,13 @@ class ListaDocumenti:
         del self.elenco[indice]
 
     def cerca(self, _id):
-        return next(indice for indice, elemento in enumerate(self.elenco) if elemento.id == _id)
+        try:
+            return next(indice for indice, elemento in enumerate(self.elenco) if elemento.id == _id)
+        except StopIteration:
+            raise DocumentNotFoundException("The requested document index wasn't found")
 
     def ultimo(self):
         return self.elenco[-1]
-
-    def __getitem__(self, indice):
-        return self.elenco[indice]
 
     def __iter__(self):
         for elemento in self.elenco:

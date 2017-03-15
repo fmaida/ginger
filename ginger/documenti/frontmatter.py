@@ -46,8 +46,11 @@ class FrontMatter:
         with open(p_file, "r") as f:
             testo = f.read()
         frontmatter, contenuto = self.separa_frontmatter(testo)
-        self.meta = yaml.safe_load(frontmatter)
-        self.contenuto = markdown2.markdown(contenuto)
+        try:
+            self.meta = yaml.safe_load(frontmatter)
+            self.contenuto = markdown2.markdown(contenuto)
+        except yaml.parser.ParserError:
+            pass
 
     def esporta(self):
         """
@@ -73,8 +76,11 @@ class FrontMatter:
             Una tupla con la parte YAML e con il resto in markdown
         """
 
-        trovato = re.search(r"(?:-{4,})([\w\W\D]*)(?:-{4,})([\w\W\D\s]*)", p_testo, re.VERBOSE | re.MULTILINE)
-        return trovato.group(1), trovato.group(2)
+        trovato = re.search(r"(?:-{4,})\n([\w\W\D]*)\n(?:-{4,})([\w\W\D\s]*)", p_testo, re.VERBOSE | re.MULTILINE)
+        try:
+            return trovato.group(1), trovato.group(2)
+        except AttributeError:
+            return "", p_testo
 
 
 def apri(game_id):

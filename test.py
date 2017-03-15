@@ -42,7 +42,7 @@ class GingerTest(unittest.TestCase):
         Il primo elemento ha sempre almeno un'immagine, per via di come creo
         i files nel pacchetto mytests
         """
-        self.assertGreaterEqual(1, len(self.ginger.find("element0001").meta["images"]),
+        self.assertGreaterEqual(len(self.ginger.find("element0001").meta["images"]), 1,
                                 "Il primo elemento doveva avere almeno un'immagine")
 
 if __name__ == "__main__":

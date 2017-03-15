@@ -22,6 +22,8 @@ def make_a_tag():
 
 def create(documents=DOCUMENTS):
 
+    date_now = datetime.datetime.now()
+
     content_dir = os.path.join(BASEDIR, "_content")
     images_dir = os.path.join(BASEDIR, "_images")
     if os.path.exists(content_dir):
@@ -33,15 +35,41 @@ def create(documents=DOCUMENTS):
 
     doclist = list(range(documents))
     for index in doclist:
+        post_date = date_now - datetime.timedelta(days=documents-index)
         doc_name = "{}{}.md".format(PREFIX, str(index+1).zfill(4))
         doc_file = os.path.join(BASEDIR, "_content", doc_name)
-        actual_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%m")
         temp = []
-        temp.append("----")
-        temp.append("Title: This is the element no. {}".format(index+1))
-        temp.append("Date:  {}".format(actual_time))
-        temp.append("Tags:  {}".format(make_a_tag()))
-        temp.append("----")
+        caso = random.randint(0, 9)
+        if caso < 8:
+            temp.append("----")
+        elif caso == 8:
+            temp.append("---")
+        else:
+            temp.append("-----")
+        caso = random.randint(0, 4)
+        if caso < 4:
+            temp.append("Title: This is the element no. {}".format(index+1))
+        caso = random.randint(0, 4)
+        if caso < 2:
+            actual_time = post_date.strftime("%Y-%m-%d %H:%m")
+            temp.append("Date:  {}".format(actual_time))
+        elif 2 <= caso < 3:
+            pass  # Volutamente
+        elif caso > 2:
+            actual_time = post_date.strftime("%Y-%m-%d")
+            temp.append("Date:  {}".format(actual_time))
+        caso = random.randint(0, 4)
+        if caso < 3:
+            temp.append("Tags:  {}".format(make_a_tag()))
+        caso = random.randint(0, 10)
+        if caso < 8:
+            temp.append("----")
+        elif caso == 8:
+            temp.append("---")
+        elif caso == 9:
+            temp.append("-----")
+        else:
+            pass # Volutamente
         temp.append("\r\n")
         temp.append("# Header of element no. {}".format(index+1))
         temp.append("")

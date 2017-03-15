@@ -1,2 +1,2 @@
-from .listadocumenti import ListaDocumenti
+from .listadocumenti import ListaDocumenti, DocumentNotFoundException
 from .documento import Documento

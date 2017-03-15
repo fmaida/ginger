@@ -23,8 +23,13 @@ class Documento:
             percorso = os.path.join(basedir, self.file)
             if os.path.exists(percorso):
                 f = FrontMatter(percorso)
-                for chiave in f.meta:
-                    self.meta[chiave.lower()] = f.meta[chiave]
+                try:
+                    for chiave in f.meta:
+                        self.meta[chiave.lower()] = f.meta[chiave]
+                except TypeError:
+                    # Si vede che non ha nessun meta-tag da copiare
+                    self.meta = []
+                    pass
         except FrontMatterException:
             pass
 
