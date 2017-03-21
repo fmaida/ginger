@@ -1,5 +1,2 @@
-from .documenti.frontmatter import FrontMatter
-from .documenti import ListaDocumenti, Documento
-from .ginger import Ginger
-
-
+from ginger.elenco.documento import FrontMatter
+from ginger.ginger import Ginger

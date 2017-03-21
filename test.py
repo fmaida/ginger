@@ -26,7 +26,7 @@ class GingerTest(unittest.TestCase):
         self.ginger.scansiona()
 
     def test_documenti_trovati(self):
-        self.assertEqual(len(self.ginger.documenti), 100, "Ci dovevano essere 100 documenti")
+        self.assertEqual(len(self.ginger.documenti), 100, "Ci dovevano essere 100 elenco")
 
     def test_tutti_hanno_titolo_e_tag(self):
         for indice, elemento in enumerate(self.ginger, start=1):

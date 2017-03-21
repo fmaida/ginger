@@ -2,7 +2,7 @@ import json
 import os
 import re
 
-from .documenti import ListaDocumenti, Documento, DocumentNotFoundException
+from .elenco import Elenco, Documento, DocumentNotFoundException
 
 
 class TipoAllegato:
@@ -41,7 +41,7 @@ class Ginger:
         self.estensione = ".md"
         # Azzera alcuni parametri
         self.totale_documenti = 0
-        self.documenti = ListaDocumenti()
+        self.documenti = Elenco()
         self.allegati = []
 
     def registra_allegati(self, tag, estensioni):
@@ -66,7 +66,7 @@ class Ginger:
         e di possibili allegati
         """
 
-        self.documenti = ListaDocumenti()
+        self.documenti = Elenco()
 
         for cartella in self.cartelle:
             self.analizza_cartella(cartella)
@@ -143,7 +143,7 @@ class Ginger:
         except DocumentNotFoundException:
             # Se siamo qui vuol dire che non ha trovato un'altro
             # elemento con lo stesso ID ricercato... pazienza, vuol
-            # dire che lo aggiungiamo ai nostri documenti
+            # dire che lo aggiungiamo ai nostri elenco
             self.documenti.aggiungi(Documento(_id=_id, _file="", basedir=self.basedir))
             if tag == "":
                 self.documenti.ultimo().file = os.path.relpath(documento, self.basedir)

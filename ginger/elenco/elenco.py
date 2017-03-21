@@ -1,13 +1,16 @@
+from .documento import Documento
+
+
 class DocumentNotFoundException(Exception):
     pass
 
 
-class ListaDocumenti:
+class Elenco:
 
     def __init__(self):
         self.elenco = []
 
-    def aggiungi(self, documento):
+    def aggiungi(self, documento: Documento):
         self.elenco.append(documento)
 
     def rimuovi(self, indice):
