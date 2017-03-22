@@ -1,4 +1,5 @@
 import os
+import datetime
 from collections import OrderedDict
 
 from ginger.elenco.documento.frontmatter import FrontMatter, FrontMatterException
@@ -52,11 +53,16 @@ class Documento:
             file_md = os.path.join(self.BASEDIR, self.file)
             if os.path.exists(file_md):
                 f = FrontMatter(file_md)
-                # Se il titolo non è nei meta-tags se lo inventa lui
+                # Se il documento non ha meta-tags,
+                # crea un dizionario vuoto per cominciare
                 if f.meta is None:
                     f.meta = dict()
+                # Se il titolo non è nei meta-tags se lo inventa lui
                 if "title" not in f.meta:
                     f.meta["title"] = self.file
+                # Se la data non è nei meta-tags se lo inventa lui
+                if "date" not in f.meta:
+                    f.meta["date"] = datetime.datetime.now()
                 try:
                     for chiave in f.meta:
                         self.meta[chiave.lower()] = f.meta[chiave]

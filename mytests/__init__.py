@@ -69,7 +69,7 @@ def create(documents=DOCUMENTS):
         elif caso == 9:
             temp.append("-----")
         else:
-            pass # Volutamente
+            pass  # Volutamente
         temp.append("\r\n")
         temp.append("# Header of element no. {}".format(index+1))
         temp.append("")
@@ -108,6 +108,7 @@ def create(documents=DOCUMENTS):
         f.close()
 
     img_name = "{}{}--999.png".format(PREFIX, str(1).zfill(4))
+    img_file = os.path.join(BASEDIR, "_images", img_name)
     f = open(img_file, "wb")
     f.write(b".")
     f.close()
