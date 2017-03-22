@@ -42,6 +42,7 @@ class Ginger:
         # Azzera alcuni parametri
         self.totale_documenti = 0
         self.documenti = Elenco()
+        self.documenti.set_basedir(self.basedir)
         self.allegati = []
 
     def registra_allegati(self, tag, estensioni):
@@ -144,12 +145,13 @@ class Ginger:
             # Se siamo qui vuol dire che non ha trovato un'altro
             # elemento con lo stesso ID ricercato... pazienza, vuol
             # dire che lo aggiungiamo ai nostri elenco
-            self.documenti.aggiungi(Documento(_id=_id, _file="", basedir=self.basedir))
+            self.documenti.aggiungi(Documento(_id=_id, _file=""))
+            ultimo_doc = self.documenti.ultimo()
             if tag == "":
-                self.documenti.ultimo().file = os.path.relpath(documento, self.basedir)
-                self.documenti.ultimo().importa_tags(self.basedir)
+                ultimo_doc.file = os.path.relpath(documento, self.basedir)
+                ultimo_doc.importa_tags()
             else:
-                self.documenti.ultimo().meta[tag] = [os.path.relpath(documento, self.basedir)]
+                ultimo_doc.meta[tag] = [os.path.relpath(documento, self.basedir)]
 
     def find(self, _id):
         temp = [elemento for elemento in self.documenti if elemento.id == _id]
