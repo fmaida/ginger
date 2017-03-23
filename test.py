@@ -26,25 +26,14 @@ class GingerTest(unittest.TestCase):
         self.ginger.scansiona()
 
     def test_documenti_trovati(self):
-        self.assertEqual(len(self.ginger.documenti), 100, "Ci dovevano essere 100 documenti")
+        self.assertEqual(len(self.ginger.elenco), 100, "Ci dovevano essere 100 documenti")
 
     def test_tutti_hanno_titolo_e_tag(self):
         for indice, elemento in enumerate(self.ginger, start=1):
-            try:
-                self.assertIn(str(indice),
-                              elemento.meta["title"],
-                              "Non ci doveva essere un documento senza titolo")
-                self.assertIn(str(indice),
-                              elemento.meta["date"],
-                              "Non ci doveva essere un documento senza data")
-                """
-                self.assertNotEqual(elemento.meta["tags"],
-                                    "",
-                                    "Non ci doveva essere un documento senza tag")
-                """
-            except TypeError as e:
-                # print(elemento.meta["title"])
-                pass
+            self.assertTrue("title" in elemento.meta.keys(),
+                            "Non ci doveva essere un documento senza titolo")
+            self.assertTrue("date" in elemento.meta.keys(),
+                            "Non ci doveva essere un documento senza data")
 
     def test_il_primo_ha_almeno_un_immagine(self):
         """
@@ -55,6 +44,10 @@ class GingerTest(unittest.TestCase):
         ciccio = self.ginger.find("element0001")
         self.assertTrue("images" in ciccio.meta,
                         "Il primo elemento doveva avere almeno un'immagine")
+
+    def tearDown(self):
+        # print(self.ginger.json())
+        pass
 
 if __name__ == "__main__":
     unittest.main()

@@ -38,7 +38,7 @@ yaml.add_representer(os.DirEntry, file_representer)
 
 print("DOCUMENTI TROVATI:")
 print("=" * 20)
-for indice, elemento in enumerate(ginger.documenti):
+for indice, elemento in enumerate(ginger.elenco):
     print(elemento)
 
 t2 = datetime.datetime.now()

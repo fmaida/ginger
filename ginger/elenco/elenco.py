@@ -27,7 +27,7 @@ class Elenco:
 
     def cerca(self, _id):
         try:
-            return next(indice for indice, elemento in enumerate(self.elenco) if elemento.id == _id)
+            return self.elenco[next(indice for indice, elemento in enumerate(self.elenco) if elemento.id == _id)]
         except StopIteration:
             raise DocumentNotFoundException("The requested document index wasn't found")
 

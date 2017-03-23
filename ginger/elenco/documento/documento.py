@@ -3,17 +3,17 @@ import datetime
 from collections import OrderedDict
 
 from ginger.elenco.documento.frontmatter import FrontMatter, FrontMatterException
+from ginger.elenco.documento.relfile import RelFile
 
 
 class Documento:
     """
     Questa classe gestisce un singolo documento
     """
-    BASEDIR = ""
 
     @classmethod
     def set_basedir(cls, _basedir):
-        cls.BASEDIR = _basedir
+        RelFile.set_basedir(_basedir)
 
     def __init__(self, _id: str, _file: os.DirEntry):
         """
@@ -28,19 +28,11 @@ class Documento:
         self.meta = OrderedDict()
         if _file != "":
             # Se viene passato il percorso assoluto ad un file..
-            if self.BASEDIR:
-                # Se viene passata anche la cartella di partenza
-                # Calcola il percorso relativo al file
-                # attivandosi dalla cartella di partenza.
-                self.file = os.path.relpath(_file, self.BASEDIR)
-            else:
-                # Se non viene passata la cartella di partenza
-                # memorizza il percorso assoluto al file
-                self.file = _file
+            self.file = RelFile(_file)
             # Tenta di aprire il file e di leggere i meta-tags
             self.importa_tags()
         else:
-            self.file = ""
+            self.file = RelFile()
 
     def importa_tags(self):
         """
@@ -50,7 +42,7 @@ class Documento:
         :param basedir: Cartella di base per calcolare il percorso relativo al file   
         """
         try:
-            file_md = os.path.join(self.BASEDIR, self.file)
+            file_md = self.file.absolute_path
             if os.path.exists(file_md):
                 f = FrontMatter(file_md)
                 # Se il documento non ha meta-tags,
@@ -59,10 +51,10 @@ class Documento:
                     f.meta = dict()
                 # Se il titolo non è nei meta-tags se lo inventa lui
                 if "title" not in f.meta:
-                    f.meta["title"] = self.file
+                    f.meta["title"] = self.file.name
                 # Se la data non è nei meta-tags se lo inventa lui
                 if "date" not in f.meta:
-                    f.meta["date"] = datetime.datetime.now()
+                    f.meta["date"] = datetime.datetime.now().strftime("%Y-%M-%d %H:%m:%S")
                 try:
                     for chiave in f.meta:
                         self.meta[chiave.lower()] = f.meta[chiave]
@@ -81,7 +73,7 @@ class Documento:
         """
         temp = dict()
         temp["id"] = self.id
-        temp["file"] = self.file
+        temp["file"] = self.file.relative_path
         temp["rel"] = {}
         for chiave in self.meta:
             temp["rel"][chiave] = self.meta[chiave]

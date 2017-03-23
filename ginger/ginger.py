@@ -2,7 +2,7 @@ import json
 import os
 import re
 
-from .elenco import Elenco, Documento, DocumentNotFoundException
+from .elenco import Elenco, Documento, RelFile, DocumentNotFoundException
 
 
 class TipoAllegato:
@@ -41,8 +41,8 @@ class Ginger:
         self.estensione = ".md"
         # Azzera alcuni parametri
         self.totale_documenti = 0
-        self.documenti = Elenco()
-        self.documenti.set_basedir(self.basedir)
+        self.elenco = Elenco()
+        self.elenco.set_basedir(self.basedir)
         self.allegati = []
 
     def registra_allegati(self, tag, estensioni):
@@ -67,13 +67,13 @@ class Ginger:
         e di possibili allegati
         """
 
-        self.documenti = Elenco()
+        self.elenco = Elenco()
 
         for cartella in self.cartelle:
             self.analizza_cartella(cartella)
 
         # Una volta finito di scansionare le cartelle, riordina gli allegati
-        for elemento in self.documenti:
+        for elemento in self.elenco:
             for tipo in self.allegati:
                 try:
                     elemento.meta[tipo.tag].sort()
@@ -126,35 +126,36 @@ class Ginger:
             _id = valori[0].lower()
 
             # Cerca l'ID per vedere se è già stato catalogato
-            indice = self.documenti.cerca(_id)
+            elemento = self.elenco.cerca(_id)
 
             # L'elemento con l'ID esiste già,
             # altrimenti si verificherebbe un'eccezione
             if tag == "":
-                self.documenti[indice].id = _id
-                self.documenti[indice].file = os.path.relpath(documento, self.basedir)
-                self.documenti[indice].importa_tags(self.basedir)
+                elemento.id = _id
+                elemento.file = RelFile(documento)
+                elemento.importa_tags(self.basedir)
             else:
                 try:
-                    if tag not in self.documenti[indice].meta:
-                        self.documenti[indice].meta[tag] = []
-                    self.documenti[indice].meta[tag].append(os.path.relpath(documento, self.basedir))
-                except TypeError:
-                    pass
+                    a = elemento.meta.keys()
+                    if tag not in elemento.meta.keys():
+                        elemento.meta[tag] = []
+                    elemento.meta[tag].append(os.path.relpath(documento, self.basedir))
+                except TypeError as e:
+                    print(e)
         except DocumentNotFoundException:
             # Se siamo qui vuol dire che non ha trovato un'altro
             # elemento con lo stesso ID ricercato... pazienza, vuol
             # dire che lo aggiungiamo ai nostri elenco
-            self.documenti.aggiungi(Documento(_id=_id, _file=""))
-            ultimo_doc = self.documenti.ultimo()
+            self.elenco.aggiungi(Documento(_id=_id, _file=""))
+            ultimo_doc = self.elenco.ultimo()
             if tag == "":
-                ultimo_doc.file = os.path.relpath(documento, self.basedir)
+                ultimo_doc.file = RelFile(documento)
                 ultimo_doc.importa_tags()
             else:
                 ultimo_doc.meta[tag] = [os.path.relpath(documento, self.basedir)]
 
     def find(self, _id):
-        temp = [elemento for elemento in self.documenti if elemento.id == _id]
+        temp = [elemento for elemento in self.elenco if elemento.id == _id]
         if len(temp) > 0:
             return temp[0]
         else:
@@ -162,13 +163,13 @@ class Ginger:
 
     def json(self, indent=4):
         temp = []
-        for documento in self.documenti:
+        for documento in self.elenco:
             temp.append(documento.json())
         return json.dumps(temp, indent=indent)
 
     def __iter__(self):
-        for elemento in self.documenti:
+        for elemento in self.elenco:
             yield elemento
 
     def __len__(self):
-        return len(self.documenti)
+        return len(self.elenco)
