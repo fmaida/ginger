@@ -49,21 +49,22 @@ class Documento:
                 # crea un dizionario vuoto per cominciare
                 if f.meta is None:
                     f.meta = dict()
-                # Se il titolo non è nei meta-tags se lo inventa lui
-                if "title" not in f.meta:
-                    f.meta["title"] = self.file.name
-                # Se la data non è nei meta-tags se lo inventa lui
-                if "date" not in f.meta:
-                    f.meta["date"] = datetime.datetime.now().strftime("%Y-%M-%d %H:%m:%S")
                 try:
                     for chiave in f.meta:
                         self.meta[chiave.lower()] = f.meta[chiave]
+
+                    # Se il titolo non è nei meta-tags se lo inventa lui
+                    if "title" not in self.meta.keys():
+                        self.meta["title"] = self.file.name
+                    # Se la data non è nei meta-tags se lo inventa lui
+                    if "date" not in self.meta.keys():
+                        self.meta["date"] = (datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S")
                 except TypeError:
                     # Si vede che non ha nessun meta-tag da copiare
-                    self.meta = []
                     pass
         except FrontMatterException:
             pass
+        pass
 
     def json(self) -> dict:
         """

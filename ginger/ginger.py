@@ -162,9 +162,11 @@ class Ginger:
             return None
 
     def json(self, indent=4):
-        temp = []
+        temp = dict()
+        temp["basedir"] = RelFile.BASEDIR
+        temp["records"] = []
         for documento in self.elenco:
-            temp.append(documento.json())
+            temp["records"].append(documento.json())
         return json.dumps(temp, indent=indent)
 
     def __iter__(self):

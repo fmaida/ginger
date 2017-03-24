@@ -46,7 +46,7 @@ class GingerTest(unittest.TestCase):
                         "Il primo elemento doveva avere almeno un'immagine")
 
     def tearDown(self):
-        # print(self.ginger.json())
+        print(self.ginger.json())
         pass
 
 if __name__ == "__main__":
