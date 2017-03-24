@@ -59,6 +59,9 @@ class Documento:
                     # Se la data non è nei meta-tags se lo inventa lui
                     if "date" not in self.meta.keys():
                         self.meta["date"] = (datetime.datetime.now()).strftime("%Y-%m-%d %H:%M:%S")
+                    else:
+                        if type(self.meta["date"]) == datetime:
+                            self.meta["date"] = self.meta["date"].strftime("%Y-%m-%d %H:%M:%S")
                 except TypeError:
                     # Si vede che non ha nessun meta-tag da copiare
                     pass
