@@ -12,7 +12,7 @@ class TipoAllegato:
         self.estensioni = estensioni
 
 
-class Ginger:
+class Rosie:
     """
     Ginger scandaglia una o più cartelle alla ricerca di
     file di testo che contengano un front-matter YAML con 
@@ -61,7 +61,7 @@ class Ginger:
         """
         self.allegati.append(TipoAllegato(tag=tag.lower(), estensioni=estensioni))
 
-    def scansiona(self):
+    def scan(self):
         """
         Scansiona tutte le cartelle alla ricerca di file in formato .md 
         e di possibili allegati

@@ -1,11 +1,14 @@
+# Questo modulo crea file e cartelle di prova da dare in pasto al test
+
 import os
 import datetime
 import random
 import shutil
 
+from test.creator import create
 
 BASEDIR = os.path.join(os.path.expanduser("~"), "Documents",
-                       "Progetti", "HTML-CSS", "ginger-output")
+                       "Progetti", "HTML-CSS", "rosie-output")
 
 DOCUMENTS = 500
 PREFIX = "element"
@@ -26,9 +29,14 @@ def create(documents=DOCUMENTS):
 
     content_dir = os.path.join(BASEDIR, "_content")
     images_dir = os.path.join(BASEDIR, "_images")
+    # Se non esiste la cartella principale, la crea
+    if not os.path.exists(BASEDIR):
+        os.mkdir(BASEDIR)
+    # Se esiste già la cartella per i contenuti, la cancella e ricrea
     if os.path.exists(content_dir):
         shutil.rmtree(content_dir)
     os.mkdir(content_dir)
+    # Se esiste già la cartella per le immagini, la cancella e ricrea
     if os.path.exists(images_dir):
         shutil.rmtree(images_dir)
     os.mkdir(images_dir)
@@ -112,5 +120,3 @@ def create(documents=DOCUMENTS):
     f = open(img_file, "wb")
     f.write(b".")
     f.close()
-
-

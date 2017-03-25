@@ -2,8 +2,8 @@ import os
 import datetime
 from collections import OrderedDict
 
-from ginger.elenco.documento.frontmatter import FrontMatter, FrontMatterException
-from ginger.elenco.documento.relfile import RelFile
+from rosie.elenco.documento.frontmatter import FrontMatter, FrontMatterException
+from rosie.elenco.documento.relfile import RelFile
 
 
 class Documento:

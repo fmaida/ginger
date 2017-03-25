@@ -1,35 +1,33 @@
 import os
 import unittest
 
-from ginger import Ginger
-
-# import mytests
-# mytests.create(100)
+from test.creator import create
+from rosie import Rosie
 
 
-class GingerTest(unittest.TestCase):
+class RosieTest(unittest.TestCase):
 
     def setUp(self):
         basedir = os.path.join(os.path.expanduser("~"), "Documents",
-                               "Progetti", "HTML-CSS", "ginger-output")
+                               "Progetti", "HTML-CSS", "rosie-output")
         cartelle = []
         cartelle.append(os.path.join(basedir, "_content"))
         # cartelle.append(os.path.join(basedir, "_files"))
         cartelle.append(os.path.join(basedir, "_images"))
 
-        self.ginger = Ginger(*cartelle)
-        self.ginger.registra_allegati(tag="Images",
-                                      estensioni=[".jpg", ".jpeg", ".png", ".gif"])
-        self.ginger.registra_allegati(tag="Files",
-                                      estensioni=[".zip", ".rar", ".7z"])
+        self.rosie = Rosie(*cartelle)
+        self.rosie.registra_allegati(tag="Images",
+                                     estensioni=[".jpg", ".jpeg", ".png", ".gif"])
+        self.rosie.registra_allegati(tag="Files",
+                                     estensioni=[".zip", ".rar", ".7z"])
 
-        self.ginger.scansiona()
+        self.rosie.scan()
 
     def test_documenti_trovati(self):
-        self.assertEqual(len(self.ginger.elenco), 100, "Ci dovevano essere 100 documenti")
+        self.assertEqual(len(self.rosie.elenco), 100, "Ci dovevano essere 100 documenti")
 
     def test_tutti_hanno_titolo_e_tag(self):
-        for indice, elemento in enumerate(self.ginger, start=1):
+        for indice, elemento in enumerate(self.rosie, start=1):
             self.assertTrue("title" in elemento.meta.keys(),
                             "Non ci doveva essere un documento senza titolo")
             self.assertTrue("date" in elemento.meta.keys(),
@@ -38,16 +36,18 @@ class GingerTest(unittest.TestCase):
     def test_il_primo_ha_almeno_un_immagine(self):
         """
         Il primo elemento ha sempre almeno un'immagine, per via di come creo
-        i files nel pacchetto mytests
+        i files nel pacchetto test
         """
 
-        ciccio = self.ginger.find("element0001")
+        ciccio = self.rosie.find("element0001")
         self.assertTrue("images" in ciccio.meta,
                         "Il primo elemento doveva avere almeno un'immagine")
 
     def tearDown(self):
-        print(self.ginger.json())
+        print(self.rosie.json())
         pass
 
+
 if __name__ == "__main__":
+    create(100)
     unittest.main()
