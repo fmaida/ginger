@@ -1,2 +1,4 @@
-from rosie.elenco.elenco import Elenco, DocumentNotFoundException
-from rosie.elenco.documento import Documento, RelFile
+# Elenco
+
+from rosie.elenco.elenco import Elenco, DocumentNotFound
+# from rosie.elenco.documento import Documento, RelFile

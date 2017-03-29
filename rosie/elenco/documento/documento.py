@@ -1,9 +1,9 @@
-import os
 import datetime
+import os
 from collections import OrderedDict
 
 from rosie.elenco.documento.frontmatter import FrontMatter, FrontMatterException
-from rosie.elenco.documento.relfile import RelFile
+from rosie import RelFile
 
 
 class Documento:

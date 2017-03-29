@@ -4,7 +4,7 @@ import json
 from collections import OrderedDict
 
 from ruamel import yaml
-from rosie import Ginger
+from rosie import Rosie
 
 
 basedir = os.path.join(os.path.expanduser("~"), "Documents",
@@ -14,12 +14,12 @@ cartelle.append(os.path.join(basedir, "_content"))
 cartelle.append(os.path.join(basedir, "_files"))
 cartelle.append(os.path.join(basedir, "_images"))
 
-ginger = Ginger(*cartelle)
-ginger.registra_allegati(tag="Images", estensioni=[".jpg", ".jpeg", ".png", ".gif"])
-ginger.registra_allegati(tag="Files", estensioni=[".zip", ".rar", ".7z"])
+rosie = Rosie(*cartelle)
+rosie.registra_allegati(tag="Images", estensioni=[".jpg", ".jpeg", ".png", ".gif"])
+rosie.registra_allegati(tag="Files", estensioni=[".zip", ".rar", ".7z"])
 
 t1 = datetime.datetime.now()
-ginger.scansiona()
+rosie.scan()
 
 
 """
@@ -38,13 +38,13 @@ yaml.add_representer(os.DirEntry, file_representer)
 
 print("DOCUMENTI TROVATI:")
 print("=" * 20)
-for indice, elemento in enumerate(ginger.elenco):
+for indice, elemento in enumerate(rosie.elenco):
     print(elemento)
 
 t2 = datetime.datetime.now()
 
 print()
-print(ginger.json())
+print(rosie.json())
 print()
 print(str((t2 - t1)/datetime.timedelta(seconds=1)))
 

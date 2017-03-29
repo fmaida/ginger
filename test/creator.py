@@ -5,8 +5,6 @@ import datetime
 import random
 import shutil
 
-from test.creator import create
-
 BASEDIR = os.path.join(os.path.expanduser("~"), "Documents",
                        "Progetti", "HTML-CSS", "rosie-output")
 

@@ -1,8 +1,11 @@
 import os
 import unittest
 
-from test.creator import create
 from rosie import Rosie
+from rosie import DocumentNotFound
+
+# from test import create
+# create(100)
 
 
 class RosieTest(unittest.TestCase):
@@ -43,11 +46,16 @@ class RosieTest(unittest.TestCase):
         self.assertTrue("images" in ciccio.meta,
                         "Il primo elemento doveva avere almeno un'immagine")
 
+    def test_la_ricerca_funziona(self):
+        """
+        Quando cerca un'elemento (che so esistere) lo deve trovare         
+        """
+
+        ciccio = self.rosie.find("element0003")
+        self.assertTrue(ciccio is not None, "L'elemento N. 3 doveva esistere")
+        with self.assertRaises(DocumentNotFound):
+            self.rosie.find("element9999")
+
     def tearDown(self):
-        print(self.rosie.json())
+        # print(self.rosie.json())
         pass
-
-
-if __name__ == "__main__":
-    create(100)
-    unittest.main()

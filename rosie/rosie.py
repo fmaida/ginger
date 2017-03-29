@@ -2,14 +2,10 @@ import json
 import os
 import re
 
-from .elenco import Elenco, Documento, RelFile, DocumentNotFoundException
-
-
-class TipoAllegato:
-
-    def __init__(self, tag, estensioni):
-        self.tag = tag
-        self.estensioni = estensioni
+from .elenco import Elenco  # , Documento, RelFile, DocumentNotFound
+from .tipoallegato import TipoAllegato
+from . import DocumentNotFound
+from . import RelFile
 
 
 class Rosie:
@@ -77,7 +73,9 @@ class Rosie:
             for tipo in self.allegati:
                 try:
                     elemento.meta[tipo.tag].sort()
-                except:
+                except KeyError:
+                    # Vabbè, il tipo di allegato non è presente,
+                    # vuol dire che non c'è nulla da riordinare
                     pass
 
     def analizza_cartella(self, cartella):
@@ -115,21 +113,20 @@ class Rosie:
             documento: Il documento da aggiungere
             tag: Il tag sotto cui catalogarlo (se è vuoto è un file .md)
         """
+        # Prima di iniziare cerca di capire se il nome dell'elemento
+        # finisce con un "--n" dove n è un numero da 0 in poi
+        # Es: file: "zanac--1" --> id: "zanac"
+        #     file: "pippols--14" --> id: "pippols"
+
+        valori = re.split(r"[-]{2,}[0-9]+$", _id)
+        _id = valori[0].lower()
+
         try:
-
-            # Prima di iniziare cerca di capire se il nome dell'elemento
-            # finisce con un "--n" dove n è un numero da 0 in poi
-            # Es: file: "zanac--1" --> id: "zanac"
-            #     file: "pippols--14" --> id: "pippols"
-
-            valori = re.split(r"[-]{2,}[0-9]+$", _id)
-            _id = valori[0].lower()
-
             # Cerca l'ID per vedere se è già stato catalogato
             elemento = self.elenco.cerca(_id)
 
             # L'elemento con l'ID esiste già,
-            # altrimenti si verificherebbe un'eccezione
+            # altrimenti si sarebbe verificata un'eccezione
             if tag == "":
                 elemento.id = _id
                 elemento.file = RelFile(documento)
@@ -142,11 +139,11 @@ class Rosie:
                     elemento.meta[tag].append(os.path.relpath(documento, self.basedir))
                 except TypeError as e:
                     print(e)
-        except DocumentNotFoundException:
+        except DocumentNotFound:
             # Se siamo qui vuol dire che non ha trovato un'altro
             # elemento con lo stesso ID ricercato... pazienza, vuol
             # dire che lo aggiungiamo ai nostri elenco
-            self.elenco.aggiungi(Documento(_id=_id, _file=""))
+            self.elenco.aggiungi(_id=_id, _file="")
             ultimo_doc = self.elenco.ultimo()
             if tag == "":
                 ultimo_doc.file = RelFile(documento)
@@ -159,7 +156,7 @@ class Rosie:
         if len(temp) > 0:
             return temp[0]
         else:
-            return None
+            raise DocumentNotFound
 
     def json(self, indent=4):
         temp = dict()
@@ -167,7 +164,10 @@ class Rosie:
         temp["records"] = []
         for documento in self.elenco:
             temp["records"].append(documento.json())
-        return json.dumps(temp, indent=indent)
+        try:
+            return json.dumps(temp, indent=indent)
+        except TypeError:
+            pass
 
     def __iter__(self):
         for elemento in self.elenco:

@@ -47,7 +47,7 @@ class FrontMatter:
             testo = f.read()
         frontmatter, contenuto = self.separa_frontmatter(testo)
         try:
-            self.meta = yaml.safe_load(frontmatter)
+            self.meta = yaml.load(frontmatter, Loader=yaml.BaseLoader)
             self.contenuto = markdown2.markdown(contenuto)
         except yaml.parser.ParserError:
             pass
